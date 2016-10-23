@@ -1,0 +1,21 @@
+{
+  "name": "Till Example",
+  "description": "",
+  "success_url": "/",
+  "env": {},
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "Standard-1X"
+    } 
+  },
+  "image": "heroku/nodejs",
+  "addons": [
+    {
+      "plan": "till"
+    },
+    {
+      "plan": "pusher"
+    }
+  ]
+}
