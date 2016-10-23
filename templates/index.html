@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Till Example - Node.js</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <style>
+        #content {
+            max-width: 500px;
+            margin: auto;
+        }
+
+        #phone {
+            width: 65%;
+            float: left;
+            padding: 10px;
+            font-size: 16px;
+            height: 30px;
+        }
+
+        #submit {
+            width: 25%;
+            float: right;
+        }
+
+        #pie_chart {
+            margin-top: 20px;
+            margin: auto;
+        }
+
+        .clear {
+            clear: both;
+        }
+
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            height: 53px;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <h1>Till Example</h1>
+        <h3>What's your favorite color?</h3>
+        <form action="javascript:window.send()">
+            <input type="hidden" name="uuid" id="uuid" value="{{uuid}}" />
+            <input type="hidden" name="pusher_token" id="pusher_token" value="{{pusher_token}}" />
+            <input name="phone" id="phone" type="text" required="" placeholder="Your Phone # e.g. 15558675309">
+            <button id="submit" type="submit">Send</button>
+        </form>
+        <div class="clear"></div>
+        <br/>
+        <canvas id="pie_chart" width="300" height="300"></canvas>
+    </div>
+    <script type="text/javascript" src="//code.jquery.com/jquery-2.1.0.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.min.js"></script>
+    <script type="text/javascript" src="//js.pusher.com/3.1/pusher.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Init pie-chart for displaying results
+            var chart_data = {
+                datasets: [{data: [1, 1, 1], backgroundColor: ["#FF6384", "#4BC0C0", "#FFCE56"]}],
+                labels: ["Red", "Green", "Yellow"]
+            };
+            var chart;
+            var context;
+            try {
+                context = document.getElementById("pie_chart").getContext("2d");
+                chart = new Chart(context, {data: chart_data, type: "pie"});
+            } catch(e) {
+                console.log(e);
+            }
+
+            // Bind Pusher events (Result Stream) to pie-chart
+            var uuid = $("#uuid").val();
+            var pusher_token = $("#pusher_token").val();
+            if(pusher_token) {
+                var pusher = new Pusher(pusher_token);
+                var channel = pusher.subscribe(uuid);
+                channel.bind("result", function(data) {
+                    try {
+                        switch(parseInt(data["answer"])) {
+                            case 1:
+                                chart_data["datasets"][0]["data"][0]++;
+                                break;
+                            case 2:
+                                chart_data["datasets"][0]["data"][1]++;
+                                break;
+                            case 3:
+                                chart_data["datasets"][0]["data"][2]++;
+                                break;
+                            default:
+                                break
+                        }
+                        chart.update();
+                    } catch(e) {
+                        console.log(e);  
+                    }
+                });
+            }
+
+            // Send
+            window.send = function() {
+                var phone_element = $("#phone");
+                var phone_number;
+                try {
+                    phone_number = parseInt(phone_element.val().replace(/\D/g, ""));
+                    if(phone_number < 10000000000) {
+                        phone_number = phone_number + 10000000000;
+                    }
+                    phone_number = phone_number+"";
+                    phone_element.val(phone_number);
+                } catch(e) {
+                    console.log(e);
+                }
+
+                if(isNaN(phone_number)) {
+                    phone_element.val("").focus();
+                    alert("Please provide a valid phone number");
+                } else {
+                    var webhook_url = "https://" + window.location.hostname + "/results/";
+                    $.post(
+                        "/send/", 
+                        {"phone_number": phone_number, "uuid": uuid, "webhook_url": webhook_url},
+                        function(data) {
+                            console.log(data);
+                        }
+                    );
+                }
+            }  
+        });
+    </script>
+</body>
