@@ -1,2 +1,1 @@
-# till-node-demo
-Till demo in Node.js
+# Example in Node.js
