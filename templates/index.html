@@ -49,7 +49,7 @@
 <body>
     <div id="content">
         <h1>Till Example</h1>
-        <h3>What's your favorite color?</h3>
+        <h3>Favorite color?</h3>
         <form action="javascript:window.send()">
             <input type="hidden" name="uuid" id="uuid" value="{{uuid}}" />
             <input type="hidden" name="pusher_token" id="pusher_token" value="{{pusher_token}}" />
@@ -87,7 +87,7 @@
                 var channel = pusher.subscribe(uuid);
                 channel.bind("result", function(data) {
                     try {
-                        switch(parseInt(data["answer"])) {
+                        switch(parseInt(data["numeric_response"])) {
                             case 1:
                                 chart_data["datasets"][0]["data"][0]++;
                                 break;
@@ -131,11 +131,16 @@
                         "/send/", 
                         {"phone_number": phone_number, "uuid": uuid, "webhook_url": webhook_url},
                         function(data) {
+                            if(data.status == "success") {
+                                alert("Question sent");
+                            }
                             console.log(data);
                         }
                     );
                 }
             }  
+
+            $("#phone").focus();
         });
     </script>
 </body>

@@ -46,9 +46,6 @@ app.post("/send", function(req, res) {
   };
 
   client.post(till_send_path, data, function(err, res, body) {
-    if(res.statusCode == 200) {
-      alert("Question sent");
-    }
     return console.log(res.statusCode);
   });  
 
