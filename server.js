@@ -15,8 +15,8 @@ var till_url = process.env.TILL_URL;
 var pusher_url = process.env.PUSHER_URL;
 
 var pusher_token = pusher_url.split("http://")[1].split(":")[0];
-var till_base_url =till_url.split("addon")[0];
-var till_send_path = "addon" + till_url.split("addon")[1];
+var till_base_url =till_url.split("rpc")[0];
+var till_send_path = "rpc" + till_url.split("rpc")[1];
 
 var client = request.createClient(till_base_url);
 var pclient = pusher.forURL(pusher_url);
