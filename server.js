@@ -1,6 +1,7 @@
 var express = require("express");
 var nunjucks = require("nunjucks");
 var request = require("request-json");
+var url = require("url");
 var pusher = require("pusher");
 var bodyParser = require("body-parser");
 var uuid = require("node-uuid");
@@ -11,15 +12,15 @@ var rawBodySaver = function (req, res, buf, encoding) {
   }
 }
 
-var till_url = process.env.TILL_URL;
-var pusher_url = process.env.PUSHER_URL;
+var till_url = url.parse(process.env.TILL_URL);
+var pusher_url = url.parse(process.env.PUSHER_URL);
 
-var pusher_token = pusher_url.split("http://")[1].split(":")[0];
-var till_base_url =till_url.split("rpc")[0];
-var till_send_path = "rpc" + till_url.split("rpc")[1];
+var pusher_token = pusher_url.auth.split(":")[0];
+var till_base_url = till_url.protocol + "//" + till_url.host;
+var till_send_path = till_url.pathname;
 
 var client = request.createClient(till_base_url);
-var pclient = pusher.forURL(pusher_url);
+var pclient = pusher.forURL(pusher_url.href);
 
 var app = express();
 app.use(bodyParser.json({verify: rawBodySaver}));
