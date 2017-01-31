@@ -19,6 +19,10 @@ var pusher_token = pusher_url.auth.split(":")[0];
 var till_base_url = till_url.protocol + "//" + till_url.host;
 var till_send_path = till_url.pathname;
 
+if(till_url.query != null) {
+  till_send_path += "?"+till_url.query;
+}
+
 var client = request.createClient(till_base_url);
 var pclient = pusher.forURL(pusher_url.href);
 
