@@ -12,7 +12,7 @@
   "image": "heroku/nodejs",
   "addons": [
     {
-      "plan": "till:free"
+      "plan": "till:whirl"
     },
     {
       "plan": "pusher"
