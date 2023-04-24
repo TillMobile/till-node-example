@@ -6,13 +6,13 @@
   "formation": {
     "web": {
       "quantity": 1,
-      "size": "Free"
+      "size": "Eco"
     } 
   },
   "image": "heroku/nodejs",
   "addons": [
     {
-      "plan": "till:free"
+      "plan": "till:whirl"
     },
     {
       "plan": "pusher"
